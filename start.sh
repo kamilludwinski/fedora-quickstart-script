@@ -89,4 +89,15 @@ gsettings set org.gnome.desktop.interface color-scheme 'prefer-dark'
 gsettings set org.gnome.desktop.interface accent-color 'orange'
 gsettings set org.gnome.desktop.interface enable-hot-corners false
 
-sudo reboot
+echo "	- Wallpaper"
+REAL_USER=$(logname)
+REAL_UID=$(id -u "$REAL_USER")
+USER_HOME=$(getent passwd "$REAL_USER" | cut -d: -f6)
+WALLPAPER_PATH="$USER_HOME/Pictures/wallpapers/space4k.png"
+WALLPAPER_URI="file://$WALLPAPER_PATH"
+
+mkdir -p "$USER_HOME/Pictures/wallpapers"
+wget -q -O "$WALLPAPER_PATH" "https://raw.githubusercontent.com/kamilludwinski/fedora-quickstart-script/master/space4k.png"
+export DBUS_SESSION_BUS_ADDRESS="unix:path=/run/user/$REAL_UID/bus"
+sudo -u "$REAL_USER" DBUS_SESSION_BUS_ADDRESS=$DBUS_SESSION_BUS_ADDRESS gsettings set org.gnome.desktop.background picture-uri "$WALLPAPER_URI"
+sudo -u "$REAL_USER" DBUS_SESSION_BUS_ADDRESS=$DBUS_SESSION_BUS_ADDRESS gsettings set org.gnome.desktop.background picture-uri-dark "$WALLPAPER_URI"
